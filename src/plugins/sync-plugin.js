@@ -290,8 +290,11 @@ export class ProsemirrorBinding {
     this.mapping = new Map()
     this.mux(() => {
       const fragmentContent = this.type.toArray().map(t => createNodeFromYElement(/** @type {Y.XmlElement} */ (t), this.prosemirrorView.state.schema, this.mapping)).filter(n => n !== null)
-      // @ts-ignore
-      const tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(new PModel.Fragment(fragmentContent), 0, 0))
+      const fragment = PModel.Fragment.from(fragmentContent)
+      if (this.prosemirrorView.state.doc.content.eq(fragment)) {
+        return
+      }
+      const tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(fragment, 0, 0))
       tr.setMeta(ySyncPluginKey, { snapshot: null, prevSnapshot: null })
       this.prosemirrorView.dispatch(tr)
     })
@@ -301,8 +304,11 @@ export class ProsemirrorBinding {
     this.mapping = new Map()
     this.mux(() => {
       const fragmentContent = this.type.toArray().map(t => createNodeFromYElement(/** @type {Y.XmlElement} */ (t), this.prosemirrorView.state.schema, this.mapping)).filter(n => n !== null)
-      // @ts-ignore
-      const tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(new PModel.Fragment(fragmentContent), 0, 0))
+      const fragment = PModel.Fragment.from(fragmentContent)
+      if (this.prosemirrorView.state.doc.content.eq(fragment)) {
+        return
+      }
+      const tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(fragment, 0, 0))
       this.prosemirrorView.dispatch(tr)
     })
   }
@@ -346,8 +352,11 @@ export class ProsemirrorBinding {
             return null
           }
         }).filter(n => n !== null)
-        // @ts-ignore
-        const tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(new PModel.Fragment(fragmentContent), 0, 0))
+        const fragment = PModel.Fragment.from(fragmentContent)
+        if (this.prosemirrorView.state.doc.content.eq(fragment)) {
+          return
+        }
+        const tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(fragment, 0, 0))
         this.prosemirrorView.dispatch(tr)
       }, ySyncPluginKey)
     })
@@ -374,8 +383,11 @@ export class ProsemirrorBinding {
       transaction.changed.forEach(delType)
       transaction.changedParentTypes.forEach(delType)
       const fragmentContent = this.type.toArray().map(t => createNodeIfNotExists(/** @type {Y.XmlElement | Y.XmlHook} */ (t), this.prosemirrorView.state.schema, this.mapping)).filter(n => n !== null)
-      // @ts-ignore
-      let tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(new PModel.Fragment(fragmentContent), 0, 0))
+      const fragment = PModel.Fragment.from(fragmentContent)
+      if (this.prosemirrorView.state.doc.content.eq(fragment)) {
+        return
+      }
+      let tr = this._tr.replace(0, this.prosemirrorView.state.doc.content.size, new PModel.Slice(fragment, 0, 0))
       restoreRelativeSelection(tr, this.beforeTransactionSelection, this)
       tr = tr.setMeta(ySyncPluginKey, { isChangeOrigin: true })
       if (this.beforeTransactionSelection !== null && this._isLocalCursorInView()) {
